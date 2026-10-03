@@ -67,17 +67,20 @@ export function ExportModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/40 backdrop-blur-xs overflow-y-auto">
-      <div className="bg-white border border-slate-200 w-full max-w-lg rounded-2xl shadow-xl p-5 sm:p-6 relative my-auto animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-xs overflow-y-auto">
+      <div className="bg-white border-t sm:border border-slate-200 w-full max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] sm:max-h-[85vh] flex flex-col relative animate-in slide-in-from-bottom sm:zoom-in-95 duration-150">
         
+        {/* Mobile Pull Indicator */}
+        <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-2 sm:hidden shrink-0" />
+
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-emerald-600" />
               Share & Export Settlement
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
               Copy a formatted summary for WhatsApp group or download backup
             </p>
           </div>
@@ -89,79 +92,83 @@ export function ExportModal({
           </button>
         </div>
 
-        {/* WhatsApp Preview Box */}
-        <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-slate-700">
-              Message Preview:
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto mt-3 space-y-3.5 pr-0.5">
+          {/* WhatsApp Preview Box */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-slate-700">
+                Message Preview:
+              </span>
+              <span className="text-slate-400">Ready to send</span>
+            </div>
+
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 max-h-48 overflow-y-auto font-mono text-[11px] sm:text-xs text-slate-800 whitespace-pre-wrap leading-relaxed select-all">
+              {summaryText}
+            </div>
+
+            {/* Share Buttons */}
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <button
+                onClick={handleCopy}
+                className={`py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] ${
+                  copied 
+                    ? 'bg-emerald-600 text-white' 
+                    : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300'
+                }`}
+              >
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4 text-slate-500" />}
+                <span className="truncate">{copied ? 'Copied!' : 'Copy Summary'}</span>
+              </button>
+
+              <button
+                onClick={handleWhatsAppRedirect}
+                className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-colors active:scale-[0.98]"
+              >
+                <Smartphone className="w-4 h-4 shrink-0" />
+                <span className="truncate">Open WhatsApp</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Backup / Export Section */}
+          <div className="pt-3 border-t border-slate-100 space-y-2">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider block">
+              Trip Data Backup & Restore
             </span>
-            <span className="text-slate-400">Ready to send to group</span>
-          </div>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 max-h-56 overflow-y-auto font-mono text-xs text-slate-800 whitespace-pre-wrap leading-relaxed select-all">
-            {summaryText}
-          </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={handleDownloadJson}
+                className="py-2 px-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors active:scale-[0.98]"
+              >
+                <Download className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                <span className="truncate">Download JSON</span>
+              </button>
 
-          {/* Share Buttons */}
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <button
-              onClick={handleCopy}
-              className={`py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
-                copied 
-                  ? 'bg-emerald-600 text-white' 
-                  : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300'
-              }`}
-            >
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4 text-slate-500" />}
-              {copied ? 'Copied to Clipboard!' : 'Copy Summary'}
-            </button>
+              <label className="py-2 px-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center active:scale-[0.98]">
+                <Upload className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                <span className="truncate">Import JSON</span>
+                <input 
+                  type="file" 
+                  accept=".json" 
+                  onChange={handleFileImport} 
+                  className="hidden" 
+                />
+              </label>
+            </div>
 
-            <button
-              onClick={handleWhatsAppRedirect}
-              className="py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-colors"
-            >
-              <Smartphone className="w-4 h-4" />
-              Open in WhatsApp
-            </button>
+            {importError && (
+              <p className="text-[11px] text-rose-600">{importError}</p>
+            )}
           </div>
         </div>
 
-        {/* Backup / Export Section */}
-        <div className="mt-5 pt-4 border-t border-slate-100 space-y-2">
-          <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
-            Trip Data Backup & Restore
-          </span>
-
-          <div className="flex gap-2">
-            <button
-              onClick={handleDownloadJson}
-              className="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
-            >
-              <Download className="w-3.5 h-3.5 text-slate-500" />
-              Download JSON
-            </button>
-
-            <label className="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center">
-              <Upload className="w-3.5 h-3.5 text-slate-500" />
-              <span>Import JSON</span>
-              <input 
-                type="file" 
-                accept=".json" 
-                onChange={handleFileImport} 
-                className="hidden" 
-              />
-            </label>
-          </div>
-
-          {importError && (
-            <p className="text-[11px] text-rose-600">{importError}</p>
-          )}
-        </div>
-
-        <div className="mt-4 pt-3 border-t border-slate-100 text-right">
+        {/* Footer */}
+        <div className="sticky bottom-0 bg-white pt-3 pb-1 border-t border-slate-100 text-right shrink-0">
           <button
             onClick={onClose}
-            className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors"
+            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors active:scale-[0.98]"
           >
             Close
           </button>

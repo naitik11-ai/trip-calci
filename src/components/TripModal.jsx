@@ -116,17 +116,20 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs overflow-y-auto">
-      <div className="bg-white border border-slate-200 w-full max-w-lg rounded-2xl shadow-xl p-6 relative animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-xs overflow-y-auto">
+      <div className="bg-white border-t sm:border border-slate-200 w-full max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] sm:max-h-[85vh] flex flex-col relative animate-in slide-in-from-bottom sm:zoom-in-95 duration-150">
         
+        {/* Mobile Pull Bar */}
+        <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-2 sm:hidden shrink-0" />
+
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 shrink-0">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
               <MapPin className="w-5 h-5 text-blue-600" />
               {tripToEdit ? 'Edit Trip & Friends' : 'Create New Trip'}
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
               Set up your friends group to start tracking expenses
             </p>
           </div>
@@ -139,13 +142,13 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
         </div>
 
         {error && (
-          <div className="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+          <div className="mt-3 p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 shrink-0">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-3 flex-1 overflow-y-auto space-y-3.5 pr-0.5">
           {/* Trip Name */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
@@ -156,7 +159,7 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Goa Weekend, Manali Trip, Friday Dinner"
+              placeholder="e.g. Goa Weekend, Manali Trip"
               className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors shadow-2xs"
             />
             {/* Quick Presets */}
@@ -167,7 +170,7 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
                     key={preset}
                     type="button"
                     onClick={() => setName(preset)}
-                    className="text-[11px] px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+                    className="text-[11px] px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors active:scale-[0.97]"
                   >
                     + {preset}
                   </button>
@@ -182,7 +185,7 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
               <Coins className="w-3.5 h-3.5 text-slate-500" />
               Currency
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
               {CURRENCIES.map(curr => {
                 const isSelected = currencyCode === curr.code;
                 return (
@@ -190,9 +193,9 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
                     key={curr.code}
                     type="button"
                     onClick={() => setCurrencyCode(curr.code)}
-                    className={`p-2 rounded-xl text-center border text-xs font-medium transition-all ${
+                    className={`p-2 rounded-xl text-center border text-xs font-medium transition-all active:scale-[0.98] ${
                       isSelected
-                        ? 'bg-blue-50 border-blue-500 text-blue-900 font-bold'
+                        ? 'bg-blue-50 border-blue-500 text-blue-900 font-bold shadow-2xs'
                         : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                     }`}
                   >
@@ -211,11 +214,11 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
                 <Users className="w-3.5 h-3.5 text-slate-500" />
                 Friends In This Trip ({members.length})
               </label>
-              <span className="text-[11px] text-slate-400">Min. 2 friends</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-400">Min. 2 friends</span>
             </div>
 
             {/* Existing Members */}
-            <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-44 overflow-y-auto pr-0.5">
               {members.map((m) => (
                 <div 
                   key={m.id}
@@ -231,12 +234,12 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
                   </div>
 
                   {/* UPI Input */}
-                  <div className="w-32 sm:w-40">
+                  <div className="w-28 xs:w-36 sm:w-44">
                     <input
                       type="text"
                       value={m.upiId || ''}
                       onChange={(e) => handleUpdateMemberUpi(m.id, e.target.value)}
-                      placeholder="UPI ID (optional)"
+                      placeholder="UPI (optional)"
                       className="w-full bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500"
                     />
                   </div>
@@ -244,7 +247,7 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
                   <button
                     type="button"
                     onClick={() => handleRemoveMember(m.id)}
-                    className="p-1 rounded-md text-slate-400 hover:text-rose-600 transition-colors"
+                    className="p-1 rounded-md text-slate-400 hover:text-rose-600 transition-colors active:scale-[0.95]"
                     title="Remove friend"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -265,13 +268,13 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
                     handleAddMember();
                   }
                 }}
-                placeholder="Friend's Name (e.g. Rahul)"
+                placeholder="Friend's Name"
                 className="flex-1 bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500"
               />
               <button
                 type="button"
                 onClick={handleAddMember}
-                className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1 transition-colors"
+                className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1 transition-colors active:scale-[0.97]"
               >
                 <Plus className="w-4 h-4" />
                 Add
@@ -280,7 +283,7 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+          <div className="sticky bottom-0 bg-white pt-3 pb-1 border-t border-slate-100 flex items-center justify-between shrink-0">
             {tripToEdit && onDeleteTrip ? (
               <button
                 type="button"
@@ -293,7 +296,7 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
                 className="text-xs text-rose-600 hover:text-rose-700 flex items-center gap-1 p-1 rounded-lg"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                Delete Trip
+                <span>Delete</span>
               </button>
             ) : <div />}
 
@@ -301,13 +304,13 @@ export function TripModal({ isOpen, onClose, onSave, tripToEdit, onDeleteTrip })
               <button
                 type="button"
                 onClick={onClose}
-                className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors border border-slate-200 rounded-xl active:scale-[0.98]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-colors active:scale-[0.98]"
               >
                 {tripToEdit ? 'Save Changes' : 'Create Trip'}
               </button>

@@ -4,15 +4,15 @@ import {
   CheckCircle2, 
   QrCode, 
   Smartphone, 
-  Sparkles, 
   History, 
   RotateCcw, 
   ShieldCheck, 
   TrendingUp, 
   TrendingDown,
   Info,
-  Layers,
-  ArrowLeftRight
+  ArrowLeftRight,
+  Sparkles,
+  X
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { formatCurrency, generateUpiLink } from '../utils/formatters';
@@ -28,7 +28,6 @@ export function SettlementView({
   onRecordSettlement, 
   onDeleteSettlement 
 }) {
-  // 'direct' (pairwise neutralization) vs 'shortcut' (global min-cash-flow)
   const [settleMode, setSettleMode] = useState('direct');
   const [selectedUpiModal, setSelectedUpiModal] = useState(null);
 
@@ -39,7 +38,7 @@ export function SettlementView({
 
   const triggerConfetti = () => {
     confetti({
-      particleCount: 60,
+      particleCount: 50,
       spread: 60,
       origin: { y: 0.6 }
     });
@@ -58,67 +57,69 @@ export function SettlementView({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       
       {/* 1. SETTLEMENT PLAN HEADER & MODE SWITCHER */}
       <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-lg font-bold text-slate-900">
-                Settlement Plan
-              </h3>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold border border-blue-200">
-                {activeDebts.length} {activeDebts.length === 1 ? 'payment' : 'payments'}
-              </span>
+        <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-sm sm:text-base font-bold text-slate-900">
+                  Settlement Plan
+                </h3>
+                <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold border border-blue-200">
+                  {activeDebts.length} {activeDebts.length === 1 ? 'payment' : 'payments'}
+                </span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                {settleMode === 'direct'
+                  ? 'Direct pair-to-pair settlements with 2-way debt neutralization'
+                  : '3rd-party merged shortcut (minimum total transfers)'}
+              </p>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {settleMode === 'direct'
-                ? 'Direct pair-to-pair settlements with 2-way debt neutralization (who actually paid for whom)'
-                : '3rd-party merged shortcut (minimum total payments across group)'}
-            </p>
           </div>
 
-          {/* Mode Selector Toggle */}
-          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs shrink-0">
+          {/* Mode Selector Toggle (Full width on mobile) */}
+          <div className="grid grid-cols-2 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
             <button
               onClick={() => setSettleMode('direct')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
+              className={`py-2 px-2 rounded-lg font-semibold transition-all flex items-center justify-center gap-1 text-center truncate ${
                 settleMode === 'direct'
                   ? 'bg-white text-slate-900 shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <ArrowLeftRight className="w-3.5 h-3.5 text-blue-600" />
-              <span>Direct Neutralized</span>
+              <ArrowLeftRight className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span className="truncate">Direct Neutralized</span>
             </button>
             <button
               onClick={() => setSettleMode('shortcut')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
+              className={`py-2 px-2 rounded-lg font-semibold transition-all flex items-center justify-center gap-1 text-center truncate ${
                 settleMode === 'shortcut'
                   ? 'bg-white text-slate-900 shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Group Shortcut</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span className="truncate">Group Shortcut</span>
             </button>
           </div>
         </div>
 
         {/* TRANSACTIONS LIST */}
         {activeDebts.length === 0 ? (
-          <div className="p-8 text-center rounded-2xl bg-white border border-slate-200 shadow-xs">
-            <div className="w-12 h-12 mx-auto rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-2">
+          <div className="p-7 sm:p-8 text-center rounded-2xl bg-white border border-slate-200 shadow-2xs">
+            <div className="w-11 h-11 mx-auto rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-2">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <h4 className="text-base font-bold text-slate-900">All Debts Settled!</h4>
+            <h4 className="text-sm sm:text-base font-bold text-slate-900">All Debts Settled!</h4>
             <p className="text-xs text-slate-500 mt-0.5">
-              Nobody owes anything in this trip. All friends are completely squared up! 🎉
+              Nobody owes anything in this trip. Everyone is all squared up! 🎉
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
             {activeDebts.map((tx) => {
               const fromMember = memberMap.get(tx.fromId);
               const toMember = memberMap.get(tx.toId);
@@ -127,39 +128,39 @@ export function SettlementView({
               return (
                 <div 
                   key={tx.id}
-                  className="p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-all shadow-xs flex flex-col justify-between gap-3.5"
+                  className="p-3.5 sm:p-4 rounded-xl bg-white border border-slate-200 hover:border-slate-300 transition-all shadow-2xs flex flex-col justify-between gap-3"
                 >
-                  {/* From -> To Row */}
-                  <div className="flex items-center justify-between gap-2">
+                  {/* From -> To Row (Optimized for narrow mobile screens) */}
+                  <div className="flex items-center justify-between gap-1.5 sm:gap-2">
                     {/* Debtor */}
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className={`w-8 h-8 rounded-lg ${AVATAR_COLORS[(fromMember?.colorIdx || 0) % AVATAR_COLORS.length]} flex items-center justify-center font-bold text-xs shrink-0`}>
+                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+                      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg ${AVATAR_COLORS[(fromMember?.colorIdx || 0) % AVATAR_COLORS.length]} flex items-center justify-center font-bold text-[10px] sm:text-xs shrink-0`}>
                         {tx.fromName.charAt(0)}
                       </div>
-                      <div className="truncate">
+                      <div className="truncate min-w-0">
                         <div className="font-semibold text-xs sm:text-sm text-slate-900 truncate">{tx.fromName}</div>
                         <div className="text-[10px] text-slate-500 font-medium">Pays</div>
                       </div>
                     </div>
 
                     {/* Arrow with Amount */}
-                    <div className="flex flex-col items-center shrink-0 px-2">
-                      <span className="text-sm sm:text-base font-bold text-slate-900">
+                    <div className="flex flex-col items-center shrink-0 px-1 sm:px-2">
+                      <span className="text-xs xs:text-sm sm:text-base font-bold text-slate-900 whitespace-nowrap">
                         {formatCurrency(tx.amount, currencySymbol)}
                       </span>
                       <div className="flex items-center gap-1 text-slate-400">
-                        <span className="h-[1px] w-6 bg-slate-300"></span>
-                        <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+                        <span className="h-[1px] w-4 sm:w-6 bg-slate-300"></span>
+                        <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-500" />
                       </div>
                     </div>
 
                     {/* Creditor */}
-                    <div className="flex items-center gap-2 min-w-0 text-right justify-end">
-                      <div className="truncate">
+                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1 text-right justify-end">
+                      <div className="truncate min-w-0">
                         <div className="font-semibold text-xs sm:text-sm text-slate-900 truncate">{tx.toName}</div>
                         <div className="text-[10px] text-slate-500 font-medium">Receives</div>
                       </div>
-                      <div className={`w-8 h-8 rounded-lg ${AVATAR_COLORS[(toMember?.colorIdx || 0) % AVATAR_COLORS.length]} flex items-center justify-center font-bold text-xs shrink-0`}>
+                      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg ${AVATAR_COLORS[(toMember?.colorIdx || 0) % AVATAR_COLORS.length]} flex items-center justify-center font-bold text-[10px] sm:text-xs shrink-0`}>
                         {tx.toName.charAt(0)}
                       </div>
                     </div>
@@ -181,7 +182,7 @@ export function SettlementView({
                       <div className="flex items-center gap-1.5">
                         <a
                           href={upiLink}
-                          className="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                          className="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-semibold flex items-center gap-1 transition-colors active:scale-[0.96]"
                         >
                           <Smartphone className="w-3.5 h-3.5" />
                           <span>Pay UPI</span>
@@ -189,24 +190,24 @@ export function SettlementView({
 
                         <button
                           onClick={() => setSelectedUpiModal(tx)}
-                          className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs transition-colors"
+                          className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs transition-colors active:scale-[0.96]"
                           title="View UPI QR Code"
                         >
                           <QrCode className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ) : (
-                      <div className="text-[11px] text-slate-400 italic">
+                      <div className="text-[10px] sm:text-[11px] text-slate-400 italic">
                         No UPI set
                       </div>
                     )}
 
                     <button
                       onClick={() => handleSettleDirectly(tx)}
-                      className="ml-auto px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs"
+                      className="ml-auto px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-2xs active:scale-[0.96]"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                      Mark Settled
+                      <span>Mark Settled</span>
                     </button>
                   </div>
                 </div>
@@ -219,15 +220,15 @@ export function SettlementView({
       {/* 2. NET BALANCES BREAKDOWN */}
       <div className="space-y-3">
         <div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900">
+          <h3 className="text-sm sm:text-base font-bold text-slate-900">
             Individual Net Balances
           </h3>
           <p className="text-xs text-slate-500">
-            Green indicates money to receive; Red indicates money to pay
+            Green shows money owed back; Red shows money to pay
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
           {trip.members.map(member => {
             const net = balances[member.id] || 0;
             const paid = totalPaidByMember[member.id] || 0;
@@ -238,7 +239,7 @@ export function SettlementView({
             return (
               <div 
                 key={member.id}
-                className={`p-4 rounded-xl border flex flex-col justify-between shadow-2xs ${
+                className={`p-3.5 sm:p-4 rounded-xl border flex flex-col justify-between shadow-2xs ${
                   isOwed 
                     ? 'bg-emerald-50/60 border-emerald-200/80' 
                     : owes 
@@ -246,37 +247,37 @@ export function SettlementView({
                     : 'bg-white border-slate-200'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
                   <div className="flex items-center gap-2 truncate">
                     <div className={`w-7 h-7 rounded-lg ${AVATAR_COLORS[member.colorIdx % AVATAR_COLORS.length]} flex items-center justify-center font-bold text-xs shrink-0`}>
                       {member.name.charAt(0)}
                     </div>
-                    <span className="font-semibold text-sm text-slate-900 truncate">
+                    <span className="font-semibold text-xs sm:text-sm text-slate-900 truncate">
                       {member.name}
                     </span>
                   </div>
 
                   {/* Net Badge */}
                   {isOwed && (
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1">
+                    <span className="px-1.5 sm:px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] sm:text-xs font-bold flex items-center gap-1 shrink-0">
                       <TrendingUp className="w-3 h-3" />
                       +{formatCurrency(net, currencySymbol)}
                     </span>
                   )}
                   {owes && (
-                    <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 text-xs font-bold flex items-center gap-1">
+                    <span className="px-1.5 sm:px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[11px] sm:text-xs font-bold flex items-center gap-1 shrink-0">
                       <TrendingDown className="w-3 h-3" />
                       -{formatCurrency(Math.abs(net), currencySymbol)}
                     </span>
                   )}
                   {!isOwed && !owes && (
-                    <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
+                    <span className="px-1.5 sm:px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] sm:text-xs font-medium shrink-0">
                       Settled
                     </span>
                   )}
                 </div>
 
-                <div className="space-y-1 text-xs border-t border-slate-200/60 pt-2 text-slate-600">
+                <div className="space-y-1 text-[11px] sm:text-xs border-t border-slate-200/60 pt-2 text-slate-600">
                   <div className="flex justify-between">
                     <span>Paid upfront:</span>
                     <span className="font-medium text-slate-900">{formatCurrency(paid, currencySymbol)}</span>
@@ -294,7 +295,7 @@ export function SettlementView({
 
       {/* 3. SETTLEMENT HISTORY */}
       {trip.settlements && trip.settlements.length > 0 && (
-        <div className="space-y-3 pt-2">
+        <div className="space-y-2.5 pt-2">
           <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <History className="w-3.5 h-3.5 text-slate-400" />
             Settlement History ({trip.settlements.length})
@@ -309,9 +310,9 @@ export function SettlementView({
                   key={s.id}
                   className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between text-xs shadow-2xs"
                 >
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span className="text-slate-700">
+                  <div className="flex items-center gap-2 truncate pr-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="text-slate-700 truncate">
                       <strong className="text-slate-900">{fromM?.name}</strong> paid <strong className="text-slate-900">{toM?.name}</strong> {formatCurrency(s.amount, currencySymbol)}
                     </span>
                   </div>
@@ -322,7 +323,7 @@ export function SettlementView({
                         onDeleteSettlement(s.id);
                       }
                     }}
-                    className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition-colors"
+                    className="p-1.5 rounded-md text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition-colors active:scale-[0.96]"
                     title="Undo payment"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
@@ -334,12 +335,24 @@ export function SettlementView({
         </div>
       )}
 
-      {/* UPI QR Code Modal */}
+      {/* UPI QR Code Modal (Mobile Bottom Sheet / Center on Desktop) */}
       {selectedUpiModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-white border border-slate-200 w-full max-w-sm rounded-2xl p-6 text-center shadow-2xl relative animate-in zoom-in-95 duration-150">
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Scan & Pay UPI</h3>
-            <p className="text-xs text-slate-500 mb-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-xs">
+          <div className="bg-white border border-slate-200 w-full sm:max-w-sm rounded-t-3xl sm:rounded-2xl p-6 text-center shadow-2xl relative animate-in slide-in-from-bottom duration-150">
+            {/* Mobile Drag Bar */}
+            <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-4 sm:hidden" />
+
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 text-left">Scan & Pay UPI</h3>
+              <button 
+                onClick={() => setSelectedUpiModal(null)}
+                className="p-1 rounded-lg text-slate-400 hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-500 mb-4 text-left">
               Pay <strong className="text-slate-800">{selectedUpiModal.toName}</strong> {formatCurrency(selectedUpiModal.amount, currencySymbol)}
             </p>
 
@@ -360,7 +373,7 @@ export function SettlementView({
             <div className="flex gap-2">
               <button
                 onClick={() => setSelectedUpiModal(null)}
-                className="flex-1 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-semibold"
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-semibold active:scale-[0.98]"
               >
                 Close
               </button>
@@ -369,7 +382,7 @@ export function SettlementView({
                   handleSettleDirectly(selectedUpiModal);
                   setSelectedUpiModal(null);
                 }}
-                className="flex-1 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold"
+                className="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold active:scale-[0.98]"
               >
                 Mark Paid
               </button>

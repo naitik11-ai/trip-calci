@@ -171,7 +171,7 @@ export function App() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans pb-24">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans pb-24 safe-bottom">
       
       {/* Top Navbar */}
       <Navbar
@@ -191,23 +191,23 @@ export function App() {
       />
 
       {/* Main Content Area */}
-      <main className="max-w-4xl mx-auto px-4 w-full flex-1 pt-5 sm:pt-7">
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 w-full flex-1 pt-3.5 sm:pt-6">
         
-        {/* Clean Trip Card */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 mb-6 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Clean Responsive Trip Card */}
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-2xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4">
             <div>
-              <div className="flex items-center gap-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">
+              <div className="flex items-center gap-1.5 text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider mb-1">
                 <span>{activeTrip.members.length} friends</span>
                 <span>•</span>
-                <span>Currency: {activeTrip.currencyCode || 'INR'} ({activeTrip.currencySymbol || '₹'})</span>
+                <span>{activeTrip.currencyCode || 'INR'} ({activeTrip.currencySymbol || '₹'})</span>
               </div>
               
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                 {activeTrip.name}
               </h2>
 
-              <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-600 mt-1.5">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600 mt-1">
                 <span>Total spent: <strong className="text-slate-900 font-semibold">{formatCurrency(totalTripSpend, activeTrip.currencySymbol || '₹')}</strong></span>
                 <span>•</span>
                 {directDebts.length > 0 ? (
@@ -222,14 +222,14 @@ export function App() {
               </div>
             </div>
 
-            {/* Main Action Buttons */}
-            <div className="flex items-center gap-2">
+            {/* Main Action Buttons (Full width 2-column grid on phones) */}
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
               <button
                 onClick={() => setIsSettleModalOpen(true)}
-                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors shadow-xs"
+                className="w-full sm:w-auto px-3 py-2.5 sm:py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-2xs active:scale-[0.98]"
               >
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Record Payment</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span className="truncate">Record Settle</span>
               </button>
 
               <button
@@ -237,57 +237,61 @@ export function App() {
                   setExpenseToEdit(null);
                   setIsAddExpenseOpen(true);
                 }}
-                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors shadow-xs"
+                className="w-full sm:w-auto px-3.5 py-2.5 sm:py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-2xs active:scale-[0.98]"
               >
-                <Plus className="w-4 h-4 stroke-[2.5]" />
-                <span>Add Expense</span>
+                <Plus className="w-4 h-4 stroke-[2.5] shrink-0" />
+                <span className="truncate">Add Expense</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Clean Segmented Tab Switcher */}
-        <div className="flex p-1 bg-slate-200/70 rounded-xl mb-6">
-          <button
-            onClick={() => setActiveTab('expenses')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-              activeTab === 'expenses'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <Receipt className="w-4 h-4 text-slate-500" />
-            <span>Expenses ({(activeTrip.expenses || []).length})</span>
-          </button>
+        {/* Sticky Mobile-Friendly Segmented Tab Switcher */}
+        <div className="sticky top-[52px] sm:top-[57px] z-20 bg-slate-50/95 backdrop-blur-sm py-1 mb-4 sm:mb-6">
+          <div className="flex p-1 bg-slate-200/80 rounded-xl shadow-2xs">
+            <button
+              onClick={() => setActiveTab('expenses')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                activeTab === 'expenses'
+                  ? 'bg-white text-slate-900 shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Receipt className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
+              <span>Expenses</span>
+              <span className="text-[10px] sm:text-xs opacity-70">({(activeTrip.expenses || []).length})</span>
+            </button>
 
-          <button
-            onClick={() => setActiveTab('settlement')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all relative ${
-              activeTab === 'settlement'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <ArrowLeftRight className="w-4 h-4 text-slate-500" />
-            <span>Who Owes Whom</span>
-            {directDebts.length > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                {directDebts.length}
-              </span>
-            )}
-          </button>
+            <button
+              onClick={() => setActiveTab('settlement')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all relative ${
+                activeTab === 'settlement'
+                  ? 'bg-white text-slate-900 shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <ArrowLeftRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
+              <span className="hidden xs:inline">Who Owes Whom</span>
+              <span className="xs:hidden">Balances</span>
+              {directDebts.length > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                  {directDebts.length}
+                </span>
+              )}
+            </button>
 
-          <button
-            onClick={() => setActiveTab('analytics')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-              activeTab === 'analytics'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <PieChart className="w-4 h-4 text-slate-500" />
-            <span>Breakdown</span>
-          </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                activeTab === 'analytics'
+                  ? 'bg-white text-slate-900 shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <PieChart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
+              <span>Breakdown</span>
+            </button>
+          </div>
         </div>
 
         {/* Tab 1: Expenses Feed */}
@@ -333,17 +337,21 @@ export function App() {
 
       </main>
 
-      {/* Floating Action Button for Mobile */}
-      <div className="fixed bottom-5 right-5 sm:hidden z-30">
+      {/* Floating Action Button for Mobile Screens */}
+      <div 
+        className="fixed right-4 sm:hidden z-30 pointer-events-auto"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 1.25rem)' }}
+      >
         <button
           onClick={() => {
             setExpenseToEdit(null);
             setIsAddExpenseOpen(true);
           }}
-          className="w-13 h-13 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+          className="flex items-center gap-2 px-4 py-3 rounded-full bg-blue-600 text-white shadow-xl shadow-blue-600/30 active:scale-95 transition-all text-xs font-bold"
           title="Add Expense"
         >
-          <Plus className="w-6 h-6 stroke-[2.5]" />
+          <Plus className="w-4 h-4 stroke-[3]" />
+          <span>Add Bill</span>
         </button>
       </div>
 
